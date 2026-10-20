@@ -88,7 +88,7 @@ export default function TentangKami() {
             <div className="space-y-3">
               <div className="inline-flex items-center gap-2 bg-gray-900 text-white font-bold text-sm px-4 py-1.5 rounded-lg shadow-sm">
                 <MapPin className="w-4 h-4 fill-white text-gray-900" />
-                <span>Alamat Dapur / Outlet</span>
+                <span>Alamat Toko</span>
               </div>
 
               <div className="space-y-2 text-xs sm:text-sm font-extrabold text-gray-900 leading-relaxed pt-1">
@@ -119,7 +119,7 @@ export default function TentangKami() {
             <div>
               <div className="inline-flex items-center gap-2 bg-emerald-700 text-white font-bold text-xs sm:text-sm px-3.5 py-1.5 rounded-lg shadow-sm">
                 <MapPin className="w-4 h-4 fill-white text-emerald-700" />
-                <span>Google Maps Official Location</span>
+                <span>Google Maps Location</span>
               </div>
             </div>
 
