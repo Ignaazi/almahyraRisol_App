@@ -2,16 +2,16 @@
 import { ChevronLeft, ChevronRight, Image as ImageIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-// Data Banner (Kosongkan imageUrl untuk menampilkan placeholder default)
+// Data Banner
 const BANNERS = [
   {
     id: 1,
-    imageUrl: '', // Masukkan URL foto banner 1 di sini (misal: '/banner1.jpg')
-    alt: 'Banner Promo Almahyra Risol 1',
+    imageUrl: '/poster1.png', 
+    alt: 'Banner Almahyra Risol - Cemilan Favorit Keluarga Indonesia',
   },
   {
     id: 2,
-    imageUrl: '', // Masukkan URL foto banner 2 di sini
+    imageUrl: '/poster2.png', 
     alt: 'Banner Promo Almahyra Risol 2',
   },
 ];
@@ -32,7 +32,7 @@ export default function BannerSlideshow() {
   return (
     <div className="relative w-full overflow-hidden rounded-2xl sm:rounded-3xl shadow-sm bg-slate-100">
       
-      {/* Container Slideshow (Rasio Persegi Panjang Lebih Pipih) */}
+      {/* Container Slideshow (Rasio Disesuaikan dengan Foto Asli agar tidak ngezoom) */}
       <div 
         className="flex transition-transform duration-500 ease-out"
         style={{ transform: `translateX(-${currentSlide * 100}%)` }}
@@ -40,14 +40,14 @@ export default function BannerSlideshow() {
         {BANNERS.map((banner) => (
           <div 
             key={banner.id}
-            className="w-full flex-shrink-0 relative aspect-[16/6] sm:aspect-[21/6] md:aspect-[24/6]"
+            className="w-full flex-shrink-0 relative aspect-[16/6] sm:aspect-[16/5.5] md:aspect-[3/1]"
           >
             {banner.imageUrl ? (
-              /* TAMPILAN GAMBAR/FOTO BANNER */
+              /* TAMPILAN GAMBAR/FOTO BANNER (FULL TANPA NGEZOOM) */
               <img
                 src={banner.imageUrl}
                 alt={banner.alt}
-                className="w-full h-full object-cover rounded-2xl sm:rounded-3xl"
+                className="w-full h-full object-cover object-center rounded-2xl sm:rounded-3xl"
               />
             ) : (
               /* DEFAULT FALLBACK: BACKGROUND SOFT ABU-ABU */

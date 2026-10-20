@@ -1,5 +1,6 @@
 'use client';
-import { Image as ImageIcon, ShoppingCart } from 'lucide-react';
+import { ArrowLeft, Eye, Image as ImageIcon, ShoppingCart, Star, X } from 'lucide-react';
+import { useState } from 'react';
 
 // Custom SVG Icon: Best Seller Sharp (Warna Hitam)
 function BestSellerSharpIcon({ className = "w-6 h-6" }: { className?: string }) {
@@ -24,42 +25,52 @@ const PRODUCTS = [
   {
     id: 1,
     name: 'Risol Ayam',
-    price: 'Rp 12.000',
+    desc: 'Isian daging ayam suwir gurih melimpah dengan bumbu rempah pilihan.',
+    price: 'Rp 3.000',
     stock: 25,
-    imageUrl: '', // Masukkan URL foto risol ayam
+    imageUrl: '/risolayam.png',
   },
   {
     id: 2,
     name: 'Risol Mayo',
-    price: 'Rp 15.000',
+    desc: 'Kombinasi mayo kental, telur, & smoked beef lumer di mulut.',
+    price: 'Rp 3.000',
     stock: 18,
-    imageUrl: '', // Masukkan URL foto risol mayo
+    imageUrl: '/risolmayo.png',
   },
   {
     id: 3,
-    name: 'Risol Bihun',
-    price: 'Rp 10.000',
+    name: 'Risol Matcha',
+    desc: 'Sensasi manis creamy saus matcha lumer dipadu kulit renyah.',
+    price: 'Rp 3.000',
     stock: 30,
-    imageUrl: '', // Masukkan URL foto risol bihun
+    imageUrl: '/risolmatcha.png',
   },
   {
     id: 4,
-    name: 'Risol Tiramisu',
-    price: 'Rp 18.000',
+    name: 'Risol Taro',
+    desc: 'Cokelat taro manis legit beraroma harum, cocok untuk camilan manis.',
+    price: 'Rp 3.000',
     stock: 12,
-    imageUrl: '', // Masukkan URL foto risol tiramisu
+    imageUrl: '/risoltaro.png',
   },
 ];
 
 export default function ProductGrid() {
-  const handlePesan = (productName: string) => {
-    const message = encodeURIComponent(`Halo Almahyra Risol, saya ingin memesan *${productName}*.`);
-    window.open(`https://wa.me/6281234567890?text=${message}`, '_blank');
+  const [selectedProduct, setSelectedProduct] = useState<{
+    name: string;
+    desc: string;
+    imageUrl: string;
+  } | null>(null);
+
+  // Mengarahkan langsung ke WhatsApp nomor 085211489443 tanpa isi pesan otomatis
+  const handlePesan = () => {
+    window.open(`https://wa.me/6285211489443`, '_blank');
   };
 
   return (
     <div className="w-full space-y-4">
-      {/* HEADER SECTION: BEST RISOL + ICON HITAM DI KANAN TEKS */}
+      {/* HEADER SECTION: BEST RISOL + TULISAN SELENGKAPNYA */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <h2 className="text-lg sm:text-xl font-black text-gray-900 tracking-wide">
@@ -68,21 +79,21 @@ export default function ProductGrid() {
           <BestSellerSharpIcon className="w-6 h-6 sm:w-7 sm:h-7" />
         </div>
 
-        {/* TOMBOL "LIHAT SEMUA" ORANYE FULL TULISAN PUTIH */}
-        <button className="px-4 py-1.5 bg-orange-500 hover:bg-orange-600 text-white rounded-md font-bold text-xs sm:text-sm tracking-wide transition shadow-sm active:scale-95">
-          Lihat Semua
+        {/* TOMBOL "LIHAT SEMUA" ORANYE */}
+        <button className="px-3.5 sm:px-4 py-1.5 bg-orange-500 hover:bg-orange-600 text-white rounded-md font-bold text-xs sm:text-sm tracking-wide transition shadow-sm active:scale-95">
+          Lihat semua
         </button>
       </div>
 
-      {/* GRID 4 CARD PRODUK (GARIS HITAM TIPIS, UJUNG MELENGKUNG TIPIS, TINGGI TERTATA) */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-5">
+      {/* GRID PRODUK (2 KOLOM DI MOBILE, 4 KOLOM DI DESKTOP) */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-5">
         {PRODUCTS.map((item) => (
           <div
             key={item.id}
             className="bg-white rounded-lg overflow-hidden border border-gray-300 hover:border-orange-500 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between group cursor-pointer"
           >
-            {/* BAGIAN 1 (ATAS): FULL FOTO PRODUK (TINGGI DITINGKATKAN SEDIKIT) */}
-            <div className="w-full relative aspect-[4/3.2] bg-slate-100 select-none overflow-hidden border-b border-gray-200">
+            {/* BAGIAN ATAS: GAMBAR PRODUK */}
+            <div className="w-full relative aspect-[4/3] bg-slate-100 select-none overflow-hidden border-b border-gray-200">
               {item.imageUrl ? (
                 <img
                   src={item.imageUrl}
@@ -95,35 +106,124 @@ export default function ProductGrid() {
                 </div>
               )}
 
-              {/* Badge Stok Mengambang */}
-              <span className="absolute top-2 left-2 bg-white/95 backdrop-blur-md text-gray-900 text-[10px] sm:text-xs font-extrabold px-2 py-0.5 rounded-md shadow-sm border border-gray-200">
+              {/* Badge Stok */}
+              <span className="absolute top-1.5 left-1.5 sm:top-2 sm:left-2 bg-white/95 backdrop-blur-md text-gray-900 text-[9px] sm:text-xs font-extrabold px-1.5 py-0.5 sm:px-2 sm:py-0.5 rounded-md shadow-sm border border-gray-200">
                 Stok: {item.stock}
+              </span>
+
+              {/* Badge Best */}
+              <span className="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 bg-white/95 backdrop-blur-md text-gray-900 text-[9px] sm:text-xs font-extrabold px-1.5 py-0.5 sm:px-2 sm:py-0.5 rounded-md shadow-sm border border-gray-200 flex items-center gap-0.5 sm:gap-1">
+                <span>Best</span>
+                <Star className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-amber-400 fill-amber-400" />
               </span>
             </div>
 
-            {/* BAGIAN 2 (BAWAH): KONTEN INFORMASI & BUTTON */}
-            <div className="p-3 sm:p-4 flex flex-col justify-between flex-1 space-y-3">
-              <div className="space-y-1">
-                <h3 className="font-extrabold text-sm sm:text-base text-gray-900 tracking-wide leading-tight group-hover:text-orange-500 transition-colors">
+            {/* BAGIAN BAWAH: DETAIL & DESKRIPSI SINGKAT */}
+            <div className="p-2.5 sm:p-4 flex flex-col justify-between flex-1 gap-2">
+              <div className="space-y-0.5 sm:space-y-1">
+                <h3 className="font-extrabold text-xs sm:text-base text-gray-900 tracking-wide leading-tight group-hover:text-orange-500 transition-colors truncate">
                   {item.name}
                 </h3>
-                <p className="font-black text-orange-500 text-sm sm:text-base">
-                  {item.price}
+                <p className="text-[10px] sm:text-xs text-gray-700 font-medium leading-snug line-clamp-2">
+                  {item.desc}
                 </p>
               </div>
 
-              {/* TOMBOL PESAN ORANYE PANJANG */}
+              {/* BARIS HARGA & ACTION BUTTONS */}
+              <div className="flex items-center justify-between gap-1 pt-1.5 border-t border-gray-100">
+                <p className="font-black text-orange-500 text-xs sm:text-base whitespace-nowrap">
+                  {item.price}
+                </p>
+
+                <div className="flex items-center gap-1 sm:gap-1.5 flex-shrink-0">
+                  <button
+                    onClick={() => setSelectedProduct({ name: item.name, desc: item.desc, imageUrl: item.imageUrl })}
+                    title="Preview Gambar"
+                    className="p-1 sm:p-2 bg-sky-500 hover:bg-sky-600 active:scale-95 text-white rounded-md transition-all duration-200 shadow-sm"
+                  >
+                    <Eye className="w-3 h-3 sm:w-4 sm:h-4" />
+                  </button>
+
+                  <button
+                    onClick={handlePesan}
+                    title="Pesan via WhatsApp"
+                    className="px-2 py-1 sm:px-3.5 sm:py-2 bg-orange-500 hover:bg-orange-600 active:scale-95 text-white font-bold text-[11px] sm:text-xs rounded-md transition-all duration-200 flex items-center gap-1 shadow-sm whitespace-nowrap"
+                  >
+                    <ShoppingCart className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                    <span>Pesan</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* MODAL POPUP PREVIEW GAMBAR */}
+      {selectedProduct && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+          <div className="relative bg-white rounded-2xl max-w-md w-full overflow-hidden shadow-2xl border border-gray-100 space-y-4 p-4 sm:p-6">
+            
+            {/* Header Modal */}
+            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+              <h3 className="font-black text-base sm:text-lg text-gray-900">
+                {selectedProduct.name}
+              </h3>
               <button
-                onClick={() => handlePesan(item.name)}
-                className="w-full bg-orange-500 hover:bg-orange-600 active:scale-95 text-white font-black text-xs sm:text-sm py-2 px-3 rounded-md transition-all duration-200 flex items-center justify-center gap-1.5 shadow-[0_4px_12px_-2px_rgba(249,115,22,0.35)]"
+                onClick={() => setSelectedProduct(null)}
+                className="w-8 h-8 rounded-full bg-sky-500 hover:bg-sky-600 text-white flex items-center justify-center transition active:scale-95 shadow-sm"
+                title="Tutup Preview"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Area Display Gambar Pop-up */}
+            <div className="w-full aspect-[4/3] bg-slate-100 rounded-xl overflow-hidden flex items-center justify-center border border-gray-200">
+              {selectedProduct.imageUrl ? (
+                <img
+                  src={selectedProduct.imageUrl}
+                  alt={selectedProduct.name}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="flex flex-col items-center justify-center text-slate-400">
+                  <ImageIcon className="w-10 h-10 opacity-50 mb-1" />
+                  <span className="text-xs font-semibold">Gambar Belum Tersedia</span>
+                </div>
+              )}
+            </div>
+
+            {/* Deskripsi Lengkap di Modal */}
+            <p className="text-xs sm:text-sm text-gray-700 font-medium leading-relaxed bg-orange-50/50 p-3 rounded-lg border border-orange-100">
+              {selectedProduct.desc}
+            </p>
+
+            {/* Footer Modal */}
+            <div className="pt-2 flex items-center justify-between gap-3">
+              <button
+                onClick={() => setSelectedProduct(null)}
+                className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold text-xs sm:text-sm rounded-md transition flex items-center gap-1.5 active:scale-95"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span>Kembali</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  setSelectedProduct(null);
+                  handlePesan();
+                }}
+                className="px-5 py-2 bg-orange-500 hover:bg-orange-600 text-white font-black text-xs sm:text-sm rounded-md transition flex items-center gap-1.5 shadow-[0_4px_12px_-2px_rgba(249,115,22,0.35)] active:scale-95"
               >
                 <ShoppingCart className="w-4 h-4" />
                 <span>Pesan</span>
               </button>
             </div>
+
           </div>
-        ))}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

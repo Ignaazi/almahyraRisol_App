@@ -23,6 +23,7 @@ export default function Navbar() {
   const pathname = usePathname();
   const [cartCount, setCartCount] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [activeHash, setActiveHash] = useState('');
 
   useEffect(() => {
     const updateCount = () => {
@@ -36,8 +37,18 @@ export default function Navbar() {
     return () => window.removeEventListener('storage', updateCount);
   }, []);
 
+  useEffect(() => {
+    const handleHashChange = () => {
+      setActiveHash(window.location.hash);
+    };
+    
+    handleHashChange();
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
   return (
-    <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
+    <header className="bg-white border-b border-gray-200 sticky top-0 z-50 overflow-hidden">
       <div className="w-full max-w-[1400px] mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
 
         {/* SISI KIRI: LOGO BRAND + MENU NAVIGASI */}
@@ -66,29 +77,45 @@ export default function Navbar() {
           <nav className="hidden md:flex items-center gap-2 sm:gap-3 font-bold text-base text-gray-800 tracking-wide">
             <Link
               href="/"
+              onClick={() => setActiveHash('')}
               className={`px-3 py-1.5 rounded-md font-black tracking-wide transition-all duration-200 ${
-                pathname === '/' 
+                pathname === '/' && activeHash === ''
                   ? 'bg-orange-500 text-white shadow-[0_6px_16px_-2px_rgba(249,115,22,0.4)]' 
-                  : 'hover:text-orange-500'
+                  : 'text-gray-800 hover:text-orange-500'
               }`}
             >
               Home
             </Link>
             <Link
               href="/#products"
-              className="px-2.5 py-1.5 rounded-md hover:text-orange-500 transition tracking-wide"
+              onClick={() => setActiveHash('#products')}
+              className={`px-2.5 py-1.5 rounded-md transition tracking-wide ${
+                activeHash === '#products'
+                  ? 'bg-orange-500 text-white shadow-[0_6px_16px_-2px_rgba(249,115,22,0.4)]'
+                  : 'text-gray-800 hover:text-orange-500'
+              }`}
             >
               Products
             </Link>
             <Link
               href="/#promo"
-              className="px-3 py-1.5 border-[1px] border-orange-500 text-orange-500 rounded-md hover:bg-orange-50 transition flex items-center gap-1 font-bold tracking-wide"
+              onClick={() => setActiveHash('#promo')}
+              className={`px-3 py-1.5 border-[1px] border-orange-500 rounded-md transition flex items-center gap-1 font-bold tracking-wide ${
+                activeHash === '#promo'
+                  ? 'bg-orange-500 text-white shadow-[0_6px_16px_-2px_rgba(249,115,22,0.4)]'
+                  : 'text-orange-500 hover:bg-orange-50'
+              }`}
             >
               Promo 🎉
             </Link>
             <Link
               href="/#about"
-              className="px-2.5 py-1.5 rounded-md hover:text-orange-500 transition whitespace-nowrap tracking-wide"
+              onClick={() => setActiveHash('#about')}
+              className={`px-2.5 py-1.5 rounded-md transition whitespace-nowrap tracking-wide ${
+                activeHash === '#about'
+                  ? 'bg-orange-500 text-white shadow-[0_6px_16px_-2px_rgba(249,115,22,0.4)]'
+                  : 'text-gray-800 hover:text-orange-500'
+              }`}
             >
               Tentang Kami
             </Link>
@@ -96,9 +123,9 @@ export default function Navbar() {
         </div>
 
         {/* SISI KANAN: SEARCH BAR + CART + LOGIN */}
-        <div className="flex items-center gap-3 sm:gap-5">
-          {/* Search Bar Lengkung (Lebar Ditambah & Garis/Teks Dihitamkan) */}
-          <div className="relative w-40 sm:w-64 lg:w-80">
+        <div className="flex items-center gap-2 sm:gap-5">
+          {/* Search Bar Lengkung (Hanya Tampil di Screen Tablet/Desktop `hidden sm:block`) */}
+          <div className="relative hidden sm:block w-40 sm:w-64 lg:w-80">
             <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-600" />
             <input
               type="text"
@@ -108,7 +135,7 @@ export default function Navbar() {
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center gap-3 flex-shrink-0">
+          <div className="flex items-center gap-2.5 sm:gap-3 flex-shrink-0">
             <Link
               href="/cart"
               className="relative p-1.5 text-gray-800 hover:text-orange-500 transition"
@@ -121,7 +148,7 @@ export default function Navbar() {
 
             <Link
               href="/admin"
-              className="bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm sm:text-base px-3.5 py-1.5 rounded-md transition flex items-center gap-1.5 tracking-wider shadow-[0_6px_16px_-2px_rgba(249,115,22,0.4)] active:scale-95"
+              className="bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs sm:text-base px-3 sm:px-3.5 py-1.5 rounded-md transition flex items-center gap-1.5 tracking-wider shadow-[0_6px_16px_-2px_rgba(249,115,22,0.4)] active:scale-95 whitespace-nowrap"
             >
               <LogIn className="w-4 h-4" />
               <span>Login</span>
@@ -136,34 +163,72 @@ export default function Navbar() {
         <div className="md:hidden bg-white border-b border-gray-200 px-4 pt-2 pb-4 space-y-2 text-base font-bold tracking-wide">
           <Link
             href="/"
-            onClick={() => setMobileMenuOpen(false)}
+            onClick={() => {
+              setActiveHash('');
+              setMobileMenuOpen(false);
+            }}
             className={`block px-3.5 py-2 rounded-md tracking-wider ${
-              pathname === '/' ? 'bg-orange-500 text-white shadow-sm' : 'text-gray-800 hover:bg-orange-50'
+              pathname === '/' && activeHash === '' 
+                ? 'bg-orange-500 text-white shadow-sm' 
+                : 'text-gray-800 hover:bg-orange-50'
             }`}
           >
             Home
           </Link>
           <Link
             href="/#products"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block px-3.5 py-2 text-gray-800 hover:bg-orange-50 rounded-md tracking-wide"
+            onClick={() => {
+              setActiveHash('#products');
+              setMobileMenuOpen(false);
+            }}
+            className={`block px-3.5 py-2 rounded-md tracking-wide ${
+              activeHash === '#products' 
+                ? 'bg-orange-500 text-white shadow-sm' 
+                : 'text-gray-800 hover:bg-orange-50'
+            }`}
           >
             Products
           </Link>
           <Link
             href="/#promo"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block px-3.5 py-2 text-orange-500 border-[1px] border-orange-500 rounded-md tracking-wide"
+            onClick={() => {
+              setActiveHash('#promo');
+              setMobileMenuOpen(false);
+            }}
+            className={`block px-3.5 py-2 border-[1px] border-orange-500 rounded-md tracking-wide ${
+              activeHash === '#promo' 
+                ? 'bg-orange-500 text-white shadow-sm' 
+                : 'text-orange-500'
+            }`}
           >
             Promo 🎉
           </Link>
           <Link
             href="/#about"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block px-3.5 py-2 text-gray-800 hover:bg-orange-50 rounded-md tracking-wide"
+            onClick={() => {
+              setActiveHash('#about');
+              setMobileMenuOpen(false);
+            }}
+            className={`block px-3.5 py-2 rounded-md tracking-wide ${
+              activeHash === '#about' 
+                ? 'bg-orange-500 text-white shadow-sm' 
+                : 'text-gray-800 hover:bg-orange-50'
+            }`}
           >
             Tentang Kami
           </Link>
+
+          {/* SEARCH BAR DI DALAM MOBILE MENU (PALING BAWAH) */}
+          <div className="pt-2">
+            <div className="relative w-full">
+              <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-600" />
+              <input
+                type="text"
+                placeholder="Cari Product..."
+                className="w-full bg-gray-50 border border-gray-400 text-gray-900 placeholder:text-gray-500 rounded-full pl-9 pr-3 py-2 text-xs font-medium tracking-wide focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 focus:bg-white transition"
+              />
+            </div>
+          </div>
         </div>
       )}
     </header>
