@@ -1,4 +1,5 @@
 'use client';
+
 import { Award, Clock, ExternalLink, Heart, MapPin, MessageCircle, Navigation, ShieldCheck, Star } from 'lucide-react';
 
 export default function TentangKami() {
@@ -83,8 +84,10 @@ export default function TentangKami() {
         {/* SECTION BAWAH: ALAMAT & MAPS GOOGLE STYLE */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 items-stretch">
           
-          {/* BOX KIRI: ALAMAT & KONTAK (BORDER ABU-ABU GELAP) */}
-          <div className="border-2 border-gray-600 border-b-[6px] border-b-gray-800 rounded-2xl p-5 bg-white space-y-4 shadow-md flex flex-col justify-between">
+          {/* BOX KIRI: ALAMAT & KONTAK */}
+          <div className="border-2 border-gray-600 border-b-[6px] border-b-gray-800 rounded-2xl p-5 bg-white shadow-md flex flex-col justify-between space-y-6">
+            
+            {/* ITEM 1: ALAMAT TOKO */}
             <div className="space-y-3">
               <div className="inline-flex items-center gap-2 bg-gray-900 text-white font-bold text-sm px-4 py-1.5 rounded-lg shadow-sm">
                 <MapPin className="w-4 h-4 fill-white text-gray-900" />
@@ -92,27 +95,31 @@ export default function TentangKami() {
               </div>
 
               <div className="space-y-2 text-xs sm:text-sm font-extrabold text-gray-900 leading-relaxed pt-1">
-                <p><strong className="text-black font-black">Alamat :</strong> </p>
-                <p><strong className="text-black font-black">Des :</strong> </p>
-                <p><strong className="text-black font-black">Kec :</strong> </p>
-                <p><strong className="text-black font-black">Kab :</strong> </p>
+                <p><strong className="text-black font-black">Alamat :</strong> Perum. Grand Cikarang City 2, Blok L4 No.14
+Rt. 031 Rw. 008</p>
+                <p><strong className="text-black font-black">Des :</strong> Waringinjaya</p>
+                <p><strong className="text-black font-black">Kec :</strong> Kedungwaringin</p>
+                <p><strong className="text-black font-black">Kab :</strong> Bekasi</p>
+                <p><strong className="text-black font-black">Prov :</strong> Jawa Barat</p>
               </div>
             </div>
 
-            <div className="space-y-3 pt-3 border-t-2 border-gray-200">
-              <div className="inline-flex items-center gap-2 bg-gray-900 text-white font-bold text-xs px-3 py-1 rounded-md shadow-sm">
-                <MessageCircle className="w-3.5 h-3.5 fill-white text-gray-900" />
+            {/* ITEM 2: HUBUNGI KAMI */}
+            <div className="space-y-3 pt-4 border-t-2 border-gray-200">
+              <div className="inline-flex items-center gap-2 bg-gray-900 text-white font-bold text-sm px-4 py-1.5 rounded-lg shadow-sm">
+                <MessageCircle className="w-4 h-4 fill-white text-gray-900" />
                 <span>Hubungi Kami</span>
               </div>
 
-              <div className="space-y-2 text-xs sm:text-sm font-extrabold text-gray-900">
-                <p><strong className="text-black font-black">No Hp :</strong> </p>
-                <p><strong className="text-black font-black">WhatsApp :</strong> </p>
+              <div className="space-y-2 text-xs sm:text-sm font-extrabold text-gray-900 leading-relaxed pt-1">
+                <p><strong className="text-black font-black">No Hp :</strong> 085211489443</p>
+                <p><strong className="text-black font-black">WhatsApp :</strong> 085211489443</p>
               </div>
             </div>
+
           </div>
 
-          {/* BOX KANAN: GOOGLE MAPS TAMPILAN RESMI (SEPERTI FOTO SAMPLING) */}
+          {/* BOX KANAN: GOOGLE MAPS TAMPILAN RESMI */}
           <div className="border-2 border-emerald-600 border-b-[6px] border-b-emerald-800 rounded-2xl p-3 sm:p-4 bg-white shadow-md flex flex-col justify-between space-y-3">
             
             {/* BADGE HEADER HIJAU ATAS */}
@@ -123,7 +130,7 @@ export default function TentangKami() {
               </div>
             </div>
 
-            {/* CONTAINER MAPS + FLOATING INFO CARD DI POJOK KIRI ATAS */}
+            {/* CONTAINER MAPS + FLOATING INFO CARD UNTUK MENUTUPI CARD ASLI */}
             <div className="relative w-full flex-1 rounded-xl overflow-hidden border border-gray-300 min-h-[300px]">
               
               {/* GOOGLE MAPS IFRAME BACKGROUND */}
@@ -137,31 +144,31 @@ export default function TentangKami() {
                 referrerPolicy="no-referrer-when-downgrade"
               ></iframe>
 
-              {/* FLOATING CARD KANAN/KIRI ATAS (SESUAI DESAIN CONTOH GAMBAR) */}
-              <div className="absolute top-2.5 left-2.5 max-w-[250px] sm:max-w-[270px] bg-white rounded-xl p-3 shadow-xl border border-gray-200 z-10 space-y-2">
+              {/* FLOATING CARD MENUTUPI SECARA MENYELURUH DI POJOK KIRI ATAS */}
+              <div className="absolute top-0 left-0 max-w-[260px] sm:max-w-[280px] bg-white rounded-br-2xl p-3.5 shadow-xl border-r border-b border-gray-200 z-10 space-y-2">
                 <div className="space-y-1">
-                  <h4 className="text-xs sm:text-sm font-extrabold text-gray-900 leading-snug">
+                  <h4 className="text-xs sm:text-sm font-black text-gray-900 leading-snug">
                     Fajar House - Almahyra Risol
                   </h4>
-                  <p className="text-[10px] text-gray-600 font-medium leading-tight line-clamp-2">
+                  <p className="text-[10px] sm:text-[11px] text-gray-600 font-semibold leading-tight line-clamp-2">
                     P7V6+XP5, Waringinjaya, Kedungwaringin, Kabupaten Bekasi, Jawa Barat 17540
                   </p>
                 </div>
 
                 {/* RATING & REVIEWS */}
-                <div className="flex items-center gap-1 text-[11px] font-bold text-gray-800">
+                <div className="flex items-center gap-1 text-[11px] font-extrabold text-gray-900">
                   <span>5.0</span>
-                  <Star className="w-3 h-3 text-amber-500 fill-amber-500" />
-                  <span className="text-blue-600 font-semibold cursor-pointer underline">(3)</span>
+                  <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
+                  <span className="text-blue-600 font-bold cursor-pointer underline">(3)</span>
                 </div>
 
-                {/* ACTION BUTTONS (Buka di Maps & Directions) */}
+                {/* ACTION BUTTONS */}
                 <div className="flex items-center gap-1.5 pt-1">
                   <a
                     href="https://maps.app.goo.gl/TvdG2N2LqsyDcTTG7"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white font-bold text-[11px] rounded-full flex items-center gap-1 shadow-sm transition active:scale-95"
+                    className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-[11px] rounded-full flex items-center gap-1 shadow-sm transition active:scale-95"
                   >
                     <ExternalLink className="w-3 h-3" />
                     <span>Buka di Maps</span>

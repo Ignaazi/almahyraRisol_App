@@ -89,11 +89,11 @@ export default function Footer() {
             <ul className="space-y-3.5 text-xs font-semibold">
               <li className="flex items-center gap-2.5 text-slate-400 hover:text-white transition">
                 <Phone className="w-4 h-4 text-orange-500 flex-shrink-0" />
-                <span>No Telephone: </span>
+                <span>No Telephone: 085211489443</span>
               </li>
               <li className="flex items-center gap-2.5 text-slate-400 hover:text-white transition">
                 <MessageCircle className="w-4 h-4 text-emerald-500 flex-shrink-0" />
-                <span>Whatsapp: </span>
+                <span>Whatsapp: 085211489443</span>
               </li>
             </ul>
           </div>
@@ -102,8 +102,10 @@ export default function Footer() {
 
         {/* GARIS PEMBATAS BOTTOM & COPYRIGHT */}
         <div className="pt-6 border-t border-slate-800 text-center text-xs font-medium text-slate-500 space-y-1">
-          <p>&copy; Copyright <strong className="text-white font-bold">Almahyra Risol Store</strong>. All Rights Reserved.</p>
+          <p>&copy; Copyright <strong className="text-white font-bold">Almahyra Ratu Risol </strong>. All Rights Reserved.</p>
+          <p>Designed by <strong className="text-white font-bold">@AJITECH</strong>.</p>
         </div>
+        
       </div>
     </footer>
   );
