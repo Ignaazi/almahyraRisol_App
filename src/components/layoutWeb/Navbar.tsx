@@ -75,6 +75,7 @@ export default function Navbar() {
 
           {/* MENU NAVIGASI DESKTOP */}
           <nav className="hidden md:flex items-center gap-2 sm:gap-3 font-bold text-base text-gray-800 tracking-wide">
+            {/* HOME: Aktif hanya jika di route '/' dan tanpa hash */}
             <Link
               href="/"
               onClick={() => setActiveHash('')}
@@ -86,33 +87,39 @@ export default function Navbar() {
             >
               Home
             </Link>
+
+            {/* PRODUCTS: Pindah Page ke /products */}
             <Link
-              href="/#products"
-              onClick={() => setActiveHash('#products')}
+              href="/products"
+              onClick={() => setActiveHash('')}
               className={`px-2.5 py-1.5 rounded-md transition tracking-wide ${
-                activeHash === '#products'
+                pathname === '/products'
                   ? 'bg-orange-500 text-white shadow-[0_6px_16px_-2px_rgba(249,115,22,0.4)]'
                   : 'text-gray-800 hover:text-orange-500'
               }`}
             >
               Products
             </Link>
+
+            {/* PROMO: Anchor Link ke #promo */}
             <Link
               href="/#promo"
               onClick={() => setActiveHash('#promo')}
               className={`px-3 py-1.5 border-[1px] border-orange-500 rounded-md transition flex items-center gap-1 font-bold tracking-wide ${
-                activeHash === '#promo'
+                pathname === '/' && activeHash === '#promo'
                   ? 'bg-orange-500 text-white shadow-[0_6px_16px_-2px_rgba(249,115,22,0.4)]'
                   : 'text-orange-500 hover:bg-orange-50'
               }`}
             >
               Promo 🎉
             </Link>
+
+            {/* TENTANG KAMI: Anchor Link ke #about */}
             <Link
               href="/#about"
               onClick={() => setActiveHash('#about')}
               className={`px-2.5 py-1.5 rounded-md transition whitespace-nowrap tracking-wide ${
-                activeHash === '#about'
+                pathname === '/' && activeHash === '#about'
                   ? 'bg-orange-500 text-white shadow-[0_6px_16px_-2px_rgba(249,115,22,0.4)]'
                   : 'text-gray-800 hover:text-orange-500'
               }`}
@@ -124,7 +131,6 @@ export default function Navbar() {
 
         {/* SISI KANAN: SEARCH BAR + CART + LOGIN */}
         <div className="flex items-center gap-2 sm:gap-5">
-          {/* Search Bar Lengkung (Hanya Tampil di Screen Tablet/Desktop `hidden sm:block`) */}
           <div className="relative hidden sm:block w-40 sm:w-64 lg:w-80">
             <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-600" />
             <input
@@ -134,7 +140,6 @@ export default function Navbar() {
             />
           </div>
 
-          {/* Action Buttons */}
           <div className="flex items-center gap-2.5 sm:gap-3 flex-shrink-0">
             <Link
               href="/cart"
@@ -176,13 +181,13 @@ export default function Navbar() {
             Home
           </Link>
           <Link
-            href="/#products"
+            href="/products"
             onClick={() => {
-              setActiveHash('#products');
+              setActiveHash('');
               setMobileMenuOpen(false);
             }}
             className={`block px-3.5 py-2 rounded-md tracking-wide ${
-              activeHash === '#products' 
+              pathname === '/products' 
                 ? 'bg-orange-500 text-white shadow-sm' 
                 : 'text-gray-800 hover:bg-orange-50'
             }`}
@@ -196,7 +201,7 @@ export default function Navbar() {
               setMobileMenuOpen(false);
             }}
             className={`block px-3.5 py-2 border-[1px] border-orange-500 rounded-md tracking-wide ${
-              activeHash === '#promo' 
+              pathname === '/' && activeHash === '#promo' 
                 ? 'bg-orange-500 text-white shadow-sm' 
                 : 'text-orange-500'
             }`}
@@ -210,7 +215,7 @@ export default function Navbar() {
               setMobileMenuOpen(false);
             }}
             className={`block px-3.5 py-2 rounded-md tracking-wide ${
-              activeHash === '#about' 
+              pathname === '/' && activeHash === '#about' 
                 ? 'bg-orange-500 text-white shadow-sm' 
                 : 'text-gray-800 hover:bg-orange-50'
             }`}
@@ -218,7 +223,6 @@ export default function Navbar() {
             Tentang Kami
           </Link>
 
-          {/* SEARCH BAR DI DALAM MOBILE MENU (PALING BAWAH) */}
           <div className="pt-2">
             <div className="relative w-full">
               <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-600" />
