@@ -2,12 +2,11 @@
 
 import { ArrowLeft, ArrowUpDown, Eye, Filter, Image as ImageIcon, ShoppingCart, X } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import ProductGridAlert, { ToastItem } from '../home/ProductGridAlert';
 
 // Data Produk Risol Lengkap (8 Varian)
 const ALL_PRODUCTS = [
-  // BARIS 1
   {
     id: 1,
     name: 'Risol Ayam',
@@ -40,7 +39,6 @@ const ALL_PRODUCTS = [
     priceFormatted: 'Rp 3.000',
     imageUrl: '/risoltaro.png',
   },
-  // BARIS 2
   {
     id: 5,
     name: 'Risol Makaroni Bolognese',
@@ -75,7 +73,7 @@ const ALL_PRODUCTS = [
   },
 ];
 
-// Komponen Deskripsi dengan Otomatis "Selengkapnya" (Tanpa Underline)
+// Komponen Deskripsi dengan Otomatis "Selengkapnya"
 function ProductDescription({ desc }: { desc: string }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const isLong = desc.length > 70;
@@ -106,7 +104,6 @@ function ProductDescription({ desc }: { desc: string }) {
 }
 
 export default function ProductsList() {
-  const router = useRouter();
   const [selectedProduct, setSelectedProduct] = useState<{
     id: number;
     name: string;
@@ -115,38 +112,71 @@ export default function ProductsList() {
     imageUrl: string;
   } | null>(null);
 
-  // Masukkan item yang dipilih ke LocalStorage & arahkan ke halaman /keranjang
+  // State untuk Toast Notification
+  const [toasts, setToasts] = useState<ToastItem[]>([]);
+
+  // Fungsi Tambah Toast
+  const addToast = (message: string, type: 'success' | 'error') => {
+    const id = Date.now().toString();
+    const newToast: ToastItem = { id, message, type };
+
+    setToasts((prev) => [...prev, newToast]);
+
+    // Otomatis hilangkan toast setelah 3 detik
+    setTimeout(() => {
+      removeToast(id);
+    }, 3000);
+  };
+
+  // Fungsi Hapus Toast
+  const removeToast = (id: string) => {
+    setToasts((prev) => prev.filter((t) => t.id !== id));
+  };
+
+  // Handler Masukkan Keranjang + Tampilkan Alert Toast
   const handlePesan = (product: {
     id: number;
     name: string;
     price: number;
     imageUrl: string;
   }) => {
-    const existingCart = JSON.parse(localStorage.getItem('almahryra_cart') || '[]');
-    const existingIndex = existingCart.findIndex((item: any) => item.id === product.id);
+    try {
+      const existingCart = JSON.parse(localStorage.getItem('almahryra_cart') || '[]');
+      const existingIndex = existingCart.findIndex((item: any) => item.id === product.id);
 
-    if (existingIndex > -1) {
-      existingCart[existingIndex].qty += 1;
-    } else {
-      existingCart.push({
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        qty: 1,
-        imageUrl: product.imageUrl,
-      });
+      if (existingIndex > -1) {
+        existingCart[existingIndex].qty += 1;
+      } else {
+        existingCart.push({
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          qty: 1,
+          imageUrl: product.imageUrl,
+        });
+      }
+
+      localStorage.setItem('almahryra_cart', JSON.stringify(existingCart));
+      window.dispatchEvent(new Event('storage'));
+
+      // Munculkan alert toast sukses
+      addToast(`${product.name} berhasil ditambahkan!`, 'success');
+
+      // Buka drawer keranjang
+      window.dispatchEvent(new Event('openCartDrawer'));
+    } catch (e) {
+      addToast('Gagal menambahkan produk ke keranjang', 'error');
     }
-
-    localStorage.setItem('almahryra_cart', JSON.stringify(existingCart));
-    window.dispatchEvent(new Event('storage'));
-    router.push('/keranjang');
   };
 
   return (
-    <section className="w-full py-6 sm:py-8 text-gray-900">
+    <section className="w-full py-6 sm:py-8 text-gray-900 relative">
+      {/* MENAMPILKAN COMPONENT ALERT TOAST */}
+      <ProductGridAlert toasts={toasts} onRemove={removeToast} />
+
       <div className="max-w-[1440px] mx-auto px-2 sm:px-4 lg:px-8 space-y-5">
         
-        {/* TOMBOL KEMBALI ABU-ABU DENGAN BORDER HITAM TIPIS */}
+        {/* TOMBOL KEMBALI */}
         <div className="flex justify-start">
           <Link
             href="/"
@@ -157,7 +187,7 @@ export default function ProductsList() {
           </Link>
         </div>
 
-        {/* HEADER JUDUL & DESKRIPSI */}
+        {/* HEADER JUDUL */}
         <div className="space-y-1">
           <h1 className="text-3xl sm:text-5xl font-black text-orange-500 tracking-tight flex items-center gap-2.5 flex-wrap">
             <span>List Product</span>
@@ -168,7 +198,7 @@ export default function ProductsList() {
           </p>
         </div>
 
-        {/* BARIS TOMBOL: FILTER (POJOK KIRI) & URUTKAN (POJOK KANAN) */}
+        {/* FILTER & URUTKAN */}
         <div className="pt-1 flex items-center justify-between gap-3">
           <button
             type="button"
@@ -187,7 +217,7 @@ export default function ProductsList() {
           </button>
         </div>
 
-        {/* GRID PRODUK (2 KOLOM DI MOBILE, 4 KOLOM DI DESKTOP) */}
+        {/* GRID PRODUK */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6 pt-3">
           {ALL_PRODUCTS.map((item) => (
             <div
@@ -209,7 +239,7 @@ export default function ProductsList() {
                 )}
               </div>
 
-              {/* DETAIL & DESKRIPSI SINGKAT */}
+              {/* DETAIL PRODUK */}
               <div className="p-2.5 sm:p-4 flex flex-col justify-between flex-1 gap-3">
                 <div className="space-y-1">
                   <h3 className="font-extrabold text-xs sm:text-base text-gray-900 tracking-wide leading-tight group-hover:text-orange-500 transition-colors truncate">
@@ -219,7 +249,7 @@ export default function ProductsList() {
                   <ProductDescription desc={item.desc} />
                 </div>
 
-                {/* BARIS HARGA & ACTION BUTTONS */}
+                {/* HARGA & ACTION BUTTONS */}
                 <div className="flex items-center justify-between gap-1 pt-2 border-t border-gray-100">
                   <p className="font-black text-orange-500 text-xs sm:text-base whitespace-nowrap">
                     {item.priceFormatted}

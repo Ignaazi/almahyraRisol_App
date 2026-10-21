@@ -1,10 +1,11 @@
 'use client';
+
+import ProductGridAlert, { ToastItem } from '@/components/home/ProductGridAlert';
 import { ArrowLeft, Eye, Image as ImageIcon, ShoppingCart, Star, X } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-// Custom SVG Icon: Best Seller Sharp (Warna Hitam)
+// Custom SVG Icon: Best Seller Sharp
 function BestSellerSharpIcon({ className = "w-6 h-6" }: { className?: string }) {
   return (
     <svg
@@ -22,7 +23,7 @@ function BestSellerSharpIcon({ className = "w-6 h-6" }: { className?: string }) 
   );
 }
 
-// Data Produk Best Risol (4 Varian Utama)
+// Data Produk Best Risol
 const PRODUCTS = [
   {
     id: 1,
@@ -58,7 +59,6 @@ const PRODUCTS = [
   },
 ];
 
-// Komponen Deskripsi Kustom (Lebih dari 2 baris auto "Selengkapnya" warna Oranye tanpa Underline)
 function ProductDescription({ desc }: { desc: string }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const isLong = desc.length > 70;
@@ -89,7 +89,6 @@ function ProductDescription({ desc }: { desc: string }) {
 }
 
 export default function ProductGrid() {
-  const router = useRouter();
   const [selectedProduct, setSelectedProduct] = useState<{
     id: number;
     name: string;
@@ -98,35 +97,65 @@ export default function ProductGrid() {
     imageUrl: string;
   } | null>(null);
 
-  // Fungsi Menambahkan Item ke Keranjang lalu Navigasi ke /keranjang
+  // State Array untuk Menampung Toast Menumpuk (Stacked)
+  const [toasts, setToasts] = useState<ToastItem[]>([]);
+
+  // Hapus toast berdasarkan ID
+  const removeToast = (id: string) => {
+    setToasts((prev) => prev.filter((t) => t.id !== id));
+  };
+
+  // Fungsi Tambah Toast
+  const addToast = (message: string, type: 'success' | 'error' = 'success') => {
+    const id = Date.now().toString() + Math.random().toString();
+    setToasts((prev) => [...prev, { id, message, type }]);
+
+    // Hilang otomatis dalam 3 detik
+    setTimeout(() => {
+      removeToast(id);
+    }, 3000);
+  };
+
+  // Handler Pesan
   const handlePesan = (product: {
     id: number;
     name: string;
     price: number;
     imageUrl: string;
   }) => {
-    const existingCart = JSON.parse(localStorage.getItem('almahryra_cart') || '[]');
-    const existingIndex = existingCart.findIndex((item: any) => item.id === product.id);
+    try {
+      const existingCart = JSON.parse(localStorage.getItem('almahryra_cart') || '[]');
+      const existingIndex = existingCart.findIndex((item: any) => item.id === product.id);
 
-    if (existingIndex > -1) {
-      existingCart[existingIndex].qty += 1;
-    } else {
-      existingCart.push({
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        qty: 1,
-        imageUrl: product.imageUrl,
-      });
+      if (existingIndex > -1) {
+        existingCart[existingIndex].qty += 1;
+      } else {
+        existingCart.push({
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          qty: 1,
+          imageUrl: product.imageUrl,
+        });
+      }
+
+      localStorage.setItem('almahryra_cart', JSON.stringify(existingCart));
+      window.dispatchEvent(new Event('storage'));
+
+      // Panggil Toast Sukses (Latar Putih, Centang Hijau)
+      addToast(`${product.name} berhasil ditambahkan!`, 'success');
+    } catch (err) {
+      // Panggil Toast Gagal (Latar Putih, Silang Merah)
+      addToast(`Gagal menambahkan ${product.name}.`, 'error');
     }
-
-    localStorage.setItem('almahryra_cart', JSON.stringify(existingCart));
-    window.dispatchEvent(new Event('storage'));
-    router.push('/keranjang');
   };
 
   return (
-    <div className="w-full max-w-[1440px] mx-auto space-y-4">
+    <div className="w-full max-w-[1440px] mx-auto space-y-4 relative">
+      
+      {/* RENDER STACKED TOAST ALERT */}
+      <ProductGridAlert toasts={toasts} onRemove={removeToast} />
+
       {/* HEADER SECTION */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -136,7 +165,6 @@ export default function ProductGrid() {
           <BestSellerSharpIcon className="w-6 h-6 sm:w-7 sm:h-7" />
         </div>
 
-        {/* TOMBOL LIHAT SEMUA KE HALAMAN PRODUCTS */}
         <Link
           href="/products"
           className="px-3.5 sm:px-4 py-1.5 bg-orange-500 hover:bg-orange-600 text-white rounded-md font-bold text-xs sm:text-sm tracking-wide transition shadow-sm active:scale-95"
@@ -152,7 +180,6 @@ export default function ProductGrid() {
             key={item.id}
             className="bg-white rounded-lg overflow-hidden border border-gray-300 hover:border-orange-500 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between group cursor-pointer"
           >
-            {/* GAMBAR PRODUK */}
             <div className="w-full relative aspect-[4/3] bg-slate-100 select-none overflow-hidden border-b border-gray-200">
               {item.imageUrl ? (
                 <img
@@ -166,14 +193,12 @@ export default function ProductGrid() {
                 </div>
               )}
 
-              {/* Badge Best */}
               <span className="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 bg-white/95 backdrop-blur-md text-gray-900 text-[9px] sm:text-xs font-extrabold px-1.5 py-0.5 sm:px-2 sm:py-0.5 rounded-md shadow-sm border border-gray-200 flex items-center gap-0.5 sm:gap-1">
                 <span>Best</span>
                 <Star className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-amber-400 fill-amber-400" />
               </span>
             </div>
 
-            {/* DETAIL PRODUK */}
             <div className="p-2.5 sm:p-4 flex flex-col justify-between flex-1 gap-3">
               <div className="space-y-1">
                 <h3 className="font-extrabold text-xs sm:text-base text-gray-900 tracking-wide leading-tight group-hover:text-orange-500 transition-colors truncate">
@@ -183,7 +208,6 @@ export default function ProductGrid() {
                 <ProductDescription desc={item.desc} />
               </div>
 
-              {/* HARGA & ACTION BUTTONS */}
               <div className="flex items-center justify-between gap-1 pt-2 border-t border-gray-100">
                 <p className="font-black text-orange-500 text-xs sm:text-base whitespace-nowrap">
                   {item.priceFormatted}

@@ -1,5 +1,6 @@
 'use client';
 
+import KeranjangPesanan from '@/components/keranjang/KeranjangPesanan';
 import { LogIn, Menu, Search, ShoppingCart, X } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -25,6 +26,9 @@ export default function Navbar() {
   const [cartCount, setCartCount] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeHash, setActiveHash] = useState('');
+  
+  // State untuk mengontrol buka/tutup Drawer Keranjang
+  const [isCartOpen, setIsCartOpen] = useState(false);
 
   useEffect(() => {
     const updateCount = () => {
@@ -49,196 +53,203 @@ export default function Navbar() {
   }, []);
 
   return (
-    <header className="bg-white border-b border-gray-200 sticky top-0 z-50 overflow-hidden">
-      <div className="w-full max-w-[1400px] mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+    <>
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-40 overflow-hidden">
+        <div className="w-full max-w-[1400px] mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
 
-        {/* SISI KIRI: LOGO BRAND + MENU NAVIGASI */}
-        <div className="flex items-center gap-3 sm:gap-6">
-          {/* Hamburger (Mobile Only) */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-1.5 text-gray-700 hover:text-orange-500 rounded-md focus:outline-none"
-            aria-label="Toggle Menu"
-          >
-            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
-
-          {/* LOGO BRAND */}
-          <Link 
-            href="/" 
-            className="hidden sm:flex items-center gap-2.5 flex-shrink-0 mr-1 py-1 transition-all duration-200 hover:opacity-85"
-          >
-            <FoodBankIcon className="w-8 h-8" />
-            <span className="font-black text-2xl tracking-wide text-gray-900 leading-none">
-              Almahyra<span className="text-orange-500">Risol</span>
-            </span>
-          </Link>
-
-          {/* MENU NAVIGASI DESKTOP */}
-          <nav className="hidden md:flex items-center gap-2 sm:gap-3 font-bold text-base text-gray-800 tracking-wide">
-            {/* HOME */}
-            <Link
-              href="/"
-              onClick={() => setActiveHash('')}
-              className={`px-3 py-1.5 rounded-md font-black tracking-wide transition-all duration-200 ${
-                pathname === '/' && activeHash === ''
-                  ? 'bg-orange-500 text-white shadow-[0_6px_16px_-2px_rgba(249,115,22,0.4)]' 
-                  : 'text-gray-800 hover:text-orange-500'
-              }`}
+          {/* SISI KIRI: LOGO BRAND + MENU NAVIGASI */}
+          <div className="flex items-center gap-3 sm:gap-6">
+            {/* Hamburger (Mobile Only) */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden p-1.5 text-gray-700 hover:text-orange-500 rounded-md focus:outline-none"
+              aria-label="Toggle Menu"
             >
-              Home
+              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+
+            {/* LOGO BRAND */}
+            <Link 
+              href="/" 
+              className="hidden sm:flex items-center gap-2.5 flex-shrink-0 mr-1 py-1 transition-all duration-200 hover:opacity-85"
+            >
+              <FoodBankIcon className="w-8 h-8" />
+              <span className="font-black text-2xl tracking-wide text-gray-900 leading-none">
+                Almahyra<span className="text-orange-500">Risol</span>
+              </span>
             </Link>
 
-            {/* PRODUCTS */}
-            <Link
-              href="/products"
-              onClick={() => setActiveHash('')}
-              className={`px-2.5 py-1.5 rounded-md transition tracking-wide ${
-                pathname === '/products'
-                  ? 'bg-orange-500 text-white shadow-[0_6px_16px_-2px_rgba(249,115,22,0.4)]'
-                  : 'text-gray-800 hover:text-orange-500'
-              }`}
-            >
-              Products
-            </Link>
+            {/* MENU NAVIGASI DESKTOP */}
+            <nav className="hidden md:flex items-center gap-2 sm:gap-3 font-bold text-base text-gray-800 tracking-wide">
+              {/* HOME */}
+              <Link
+                href="/"
+                onClick={() => setActiveHash('')}
+                className={`px-3 py-1.5 rounded-md font-black tracking-wide transition-all duration-200 ${
+                  pathname === '/' && activeHash === ''
+                    ? 'bg-orange-500 text-white shadow-[0_6px_16px_-2px_rgba(249,115,22,0.4)]' 
+                    : 'text-gray-800 hover:text-orange-500'
+                }`}
+              >
+                Home
+              </Link>
 
-            {/* PROMO */}
-            <Link
-              href="/#promo"
-              onClick={() => setActiveHash('#promo')}
-              className={`px-3 py-1.5 border-[1px] border-orange-500 rounded-md transition flex items-center gap-1 font-bold tracking-wide ${
-                pathname === '/' && activeHash === '#promo'
-                  ? 'bg-orange-500 text-white shadow-[0_6px_16px_-2px_rgba(249,115,22,0.4)]'
-                  : 'text-orange-500 hover:bg-orange-50'
-              }`}
-            >
-              Promo 🎉
-            </Link>
+              {/* PRODUCTS */}
+              <Link
+                href="/products"
+                onClick={() => setActiveHash('')}
+                className={`px-2.5 py-1.5 rounded-md transition tracking-wide ${
+                  pathname === '/products'
+                    ? 'bg-orange-500 text-white shadow-[0_6px_16px_-2px_rgba(249,115,22,0.4)]'
+                    : 'text-gray-800 hover:text-orange-500'
+                }`}
+              >
+                Products
+              </Link>
 
-            {/* TENTANG KAMI */}
-            <Link
-              href="/#about"
-              onClick={() => setActiveHash('#about')}
-              className={`px-2.5 py-1.5 rounded-md transition whitespace-nowrap tracking-wide ${
-                pathname === '/' && activeHash === '#about'
-                  ? 'bg-orange-500 text-white shadow-[0_6px_16px_-2px_rgba(249,115,22,0.4)]'
-                  : 'text-gray-800 hover:text-orange-500'
-              }`}
-            >
-              Tentang Kami
-            </Link>
-          </nav>
-        </div>
+              {/* PROMO */}
+              <Link
+                href="/#promo"
+                onClick={() => setActiveHash('#promo')}
+                className={`px-3 py-1.5 border-[1px] border-orange-500 rounded-md transition flex items-center gap-1 font-bold tracking-wide ${
+                  pathname === '/' && activeHash === '#promo'
+                    ? 'bg-orange-500 text-white shadow-[0_6px_16px_-2px_rgba(249,115,22,0.4)]'
+                    : 'text-orange-500 hover:bg-orange-50'
+                }`}
+              >
+                Promo 🎉
+              </Link>
 
-        {/* SISI KANAN: SEARCH BAR + CART + LOGIN */}
-        <div className="flex items-center gap-2 sm:gap-5">
-          <div className="relative hidden sm:block w-40 sm:w-64 lg:w-80">
-            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-600" />
-            <input
-              type="text"
-              placeholder="Cari Product..."
-              className="w-full bg-gray-50 border border-gray-400 text-gray-900 placeholder:text-gray-500 rounded-full pl-9 pr-3 py-1.5 text-xs sm:text-sm font-medium tracking-wide focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 focus:bg-white transition"
-            />
+              {/* TENTANG KAMI */}
+              <Link
+                href="/#about"
+                onClick={() => setActiveHash('#about')}
+                className={`px-2.5 py-1.5 rounded-md transition whitespace-nowrap tracking-wide ${
+                  pathname === '/' && activeHash === '#about'
+                    ? 'bg-orange-500 text-white shadow-[0_6px_16px_-2px_rgba(249,115,22,0.4)]'
+                    : 'text-gray-800 hover:text-orange-500'
+                }`}
+              >
+                Tentang Kami
+              </Link>
+            </nav>
           </div>
 
-          <div className="flex items-center gap-2.5 sm:gap-3 flex-shrink-0">
-            {/* ICON KERANJANG MENGARAH KE /keranjang */}
-            <Link
-              href="/keranjang"
-              className="relative p-1.5 text-gray-800 hover:text-orange-500 transition"
-            >
-              <ShoppingCart className="w-6 h-6" />
-              {cartCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-orange-500 text-white text-[11px] font-bold px-1.5 py-0.2 rounded-md border border-white shadow-sm min-w-[18px] text-center">
-                  {cartCount}
-                </span>
-              )}
-            </Link>
-
-            <Link
-              href="/admin"
-              className="bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs sm:text-base px-3 sm:px-3.5 py-1.5 rounded-md transition flex items-center gap-1.5 tracking-wider shadow-[0_6px_16px_-2px_rgba(249,115,22,0.4)] active:scale-95 whitespace-nowrap"
-            >
-              <LogIn className="w-4 h-4" />
-              <span>Login</span>
-            </Link>
-          </div>
-        </div>
-
-      </div>
-
-      {/* MOBILE MENU DROPDOWN */}
-      {mobileMenuOpen && (
-        <div className="md:hidden bg-white border-b border-gray-200 px-4 pt-2 pb-4 space-y-2 text-base font-bold tracking-wide">
-          <Link
-            href="/"
-            onClick={() => {
-              setActiveHash('');
-              setMobileMenuOpen(false);
-            }}
-            className={`block px-3.5 py-2 rounded-md tracking-wider ${
-              pathname === '/' && activeHash === '' 
-                ? 'bg-orange-500 text-white shadow-sm' 
-                : 'text-gray-800 hover:bg-orange-50'
-            }`}
-          >
-            Home
-          </Link>
-          <Link
-            href="/products"
-            onClick={() => {
-              setActiveHash('');
-              setMobileMenuOpen(false);
-            }}
-            className={`block px-3.5 py-2 rounded-md tracking-wide ${
-              pathname === '/products' 
-                ? 'bg-orange-500 text-white shadow-sm' 
-                : 'text-gray-800 hover:bg-orange-50'
-            }`}
-          >
-            Products
-          </Link>
-          <Link
-            href="/#promo"
-            onClick={() => {
-              setActiveHash('#promo');
-              setMobileMenuOpen(false);
-            }}
-            className={`block px-3.5 py-2 border-[1px] border-orange-500 rounded-md tracking-wide ${
-              pathname === '/' && activeHash === '#promo' 
-                ? 'bg-orange-500 text-white shadow-sm' 
-                : 'text-orange-500'
-            }`}
-          >
-            Promo 🎉
-          </Link>
-          <Link
-            href="/#about"
-            onClick={() => {
-              setActiveHash('#about');
-              setMobileMenuOpen(false);
-            }}
-            className={`block px-3.5 py-2 rounded-md tracking-wide ${
-              pathname === '/' && activeHash === '#about' 
-                ? 'bg-orange-500 text-white shadow-sm' 
-                : 'text-gray-800 hover:bg-orange-50'
-            }`}
-          >
-            Tentang Kami
-          </Link>
-
-          <div className="pt-2">
-            <div className="relative w-full">
+          {/* SISI KANAN: SEARCH BAR + CART + LOGIN */}
+          <div className="flex items-center gap-2 sm:gap-5">
+            <div className="relative hidden sm:block w-40 sm:w-64 lg:w-80">
               <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-600" />
               <input
                 type="text"
                 placeholder="Cari Product..."
-                className="w-full bg-gray-50 border border-gray-400 text-gray-900 placeholder:text-gray-500 rounded-full pl-9 pr-3 py-2 text-xs font-medium tracking-wide focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 focus:bg-white transition"
+                className="w-full bg-gray-50 border border-gray-400 text-gray-900 placeholder:text-gray-500 rounded-full pl-9 pr-3 py-1.5 text-xs sm:text-sm font-medium tracking-wide focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 focus:bg-white transition"
               />
             </div>
+
+            <div className="flex items-center gap-2.5 sm:gap-3 flex-shrink-0">
+              {/* TOMBOL BUKA KERANJANG (SLIDE IN DRAWER) */}
+              <button
+                type="button"
+                onClick={() => setIsCartOpen(true)}
+                className="relative p-1.5 text-gray-800 hover:text-orange-500 transition cursor-pointer active:scale-95"
+                title="Buka Keranjang"
+              >
+                <ShoppingCart className="w-6 h-6" />
+                {cartCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-orange-500 text-white text-[11px] font-bold px-1.5 py-0.2 rounded-md border border-white shadow-sm min-w-[18px] text-center">
+                    {cartCount}
+                  </span>
+                )}
+              </button>
+
+              <Link
+                href="/admin"
+                className="bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs sm:text-base px-3 sm:px-3.5 py-1.5 rounded-md transition flex items-center gap-1.5 tracking-wider shadow-[0_6px_16px_-2px_rgba(249,115,22,0.4)] active:scale-95 whitespace-nowrap"
+              >
+                <LogIn className="w-4 h-4" />
+                <span>Login</span>
+              </Link>
+            </div>
           </div>
+
         </div>
-      )}
-    </header>
+
+        {/* MOBILE MENU DROPDOWN */}
+        {mobileMenuOpen && (
+          <div className="md:hidden bg-white border-b border-gray-200 px-4 pt-2 pb-4 space-y-2 text-base font-bold tracking-wide">
+            <Link
+              href="/"
+              onClick={() => {
+                setActiveHash('');
+                setMobileMenuOpen(false);
+              }}
+              className={`block px-3.5 py-2 rounded-md tracking-wider ${
+                pathname === '/' && activeHash === '' 
+                  ? 'bg-orange-500 text-white shadow-sm' 
+                  : 'text-gray-800 hover:bg-orange-50'
+              }`}
+            >
+              Home
+            </Link>
+            <Link
+              href="/products"
+              onClick={() => {
+                setActiveHash('');
+                setMobileMenuOpen(false);
+              }}
+              className={`block px-3.5 py-2 rounded-md tracking-wide ${
+                pathname === '/products' 
+                  ? 'bg-orange-500 text-white shadow-sm' 
+                  : 'text-gray-800 hover:bg-orange-50'
+              }`}
+            >
+              Products
+            </Link>
+            <Link
+              href="/#promo"
+              onClick={() => {
+                setActiveHash('#promo');
+                setMobileMenuOpen(false);
+              }}
+              className={`block px-3.5 py-2 border-[1px] border-orange-500 rounded-md tracking-wide ${
+                pathname === '/' && activeHash === '#promo' 
+                  ? 'bg-orange-500 text-white shadow-sm' 
+                  : 'text-orange-500'
+              }`}
+            >
+              Promo 🎉
+            </Link>
+            <Link
+              href="/#about"
+              onClick={() => {
+                setActiveHash('#about');
+                setMobileMenuOpen(false);
+              }}
+              className={`block px-3.5 py-2 rounded-md tracking-wide ${
+                pathname === '/' && activeHash === '#about' 
+                  ? 'bg-orange-500 text-white shadow-sm' 
+                  : 'text-gray-800 hover:bg-orange-50'
+              }`}
+            >
+              Tentang Kami
+            </Link>
+
+            <div className="pt-2">
+              <div className="relative w-full">
+                <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-600" />
+                <input
+                  type="text"
+                  placeholder="Cari Product..."
+                  className="w-full bg-gray-50 border border-gray-400 text-gray-900 placeholder:text-gray-500 rounded-full pl-9 pr-3 py-2 text-xs font-medium tracking-wide focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 focus:bg-white transition"
+                />
+              </div>
+            </div>
+          </div>
+        )}
+      </header>
+
+      {/* RENDER KOMPONEN KERANJANG SEBAGAI DRAWER SLIDE-IN */}
+      <KeranjangPesanan isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+    </>
   );
 }
