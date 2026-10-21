@@ -1,4 +1,5 @@
 'use client';
+
 import { LogIn, Menu, Search, ShoppingCart, X } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -75,7 +76,7 @@ export default function Navbar() {
 
           {/* MENU NAVIGASI DESKTOP */}
           <nav className="hidden md:flex items-center gap-2 sm:gap-3 font-bold text-base text-gray-800 tracking-wide">
-            {/* HOME: Aktif hanya jika di route '/' dan tanpa hash */}
+            {/* HOME */}
             <Link
               href="/"
               onClick={() => setActiveHash('')}
@@ -88,7 +89,7 @@ export default function Navbar() {
               Home
             </Link>
 
-            {/* PRODUCTS: Pindah Page ke /products */}
+            {/* PRODUCTS */}
             <Link
               href="/products"
               onClick={() => setActiveHash('')}
@@ -101,7 +102,7 @@ export default function Navbar() {
               Products
             </Link>
 
-            {/* PROMO: Anchor Link ke #promo */}
+            {/* PROMO */}
             <Link
               href="/#promo"
               onClick={() => setActiveHash('#promo')}
@@ -114,7 +115,7 @@ export default function Navbar() {
               Promo 🎉
             </Link>
 
-            {/* TENTANG KAMI: Anchor Link ke #about */}
+            {/* TENTANG KAMI */}
             <Link
               href="/#about"
               onClick={() => setActiveHash('#about')}
@@ -141,14 +142,17 @@ export default function Navbar() {
           </div>
 
           <div className="flex items-center gap-2.5 sm:gap-3 flex-shrink-0">
+            {/* ICON KERANJANG MENGARAH KE /keranjang */}
             <Link
-              href="/cart"
+              href="/keranjang"
               className="relative p-1.5 text-gray-800 hover:text-orange-500 transition"
             >
               <ShoppingCart className="w-6 h-6" />
-              <span className="absolute -top-1 -right-1 bg-orange-500 text-white text-[11px] font-bold px-1.5 py-0.2 rounded-md border border-white shadow-sm min-w-[18px] text-center">
-                {cartCount}
-              </span>
+              {cartCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-orange-500 text-white text-[11px] font-bold px-1.5 py-0.2 rounded-md border border-white shadow-sm min-w-[18px] text-center">
+                  {cartCount}
+                </span>
+              )}
             </Link>
 
             <Link
