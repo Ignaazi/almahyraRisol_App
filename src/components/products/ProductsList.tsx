@@ -1,6 +1,8 @@
 'use client';
+
 import { ArrowLeft, ArrowUpDown, Eye, Filter, Image as ImageIcon, ShoppingCart, X } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 // Data Produk Risol Lengkap (8 Varian)
@@ -10,28 +12,32 @@ const ALL_PRODUCTS = [
     id: 1,
     name: 'Risol Ayam',
     desc: 'Isian daging ayam suwir gurih melimpah dengan bumbu rempah pilihan khas resep keluarga yang lezat.',
-    price: 'Rp 3.000',
+    price: 3000,
+    priceFormatted: 'Rp 3.000',
     imageUrl: '/risolayam.png',
   },
   {
     id: 2,
     name: 'Risol Mayo',
     desc: 'Kombinasi mayo kental, telur, & smoked beef lumer di mulut saat dimakan hangat-hangat.',
-    price: 'Rp 3.000',
+    price: 3000,
+    priceFormatted: 'Rp 3.000',
     imageUrl: '/risolmayo.png',
   },
   {
     id: 3,
     name: 'Risol Matcha',
     desc: 'Sensasi manis creamy saus matcha lumer dipadu kulit renyah garing sempurna.',
-    price: 'Rp 3.000',
+    price: 3000,
+    priceFormatted: 'Rp 3.000',
     imageUrl: '/risolmatcha.png',
   },
   {
     id: 4,
     name: 'Risol Taro',
     desc: 'Cokelat taro manis legit beraroma harum, cocok untuk camilan manis saat bersantai.',
-    price: 'Rp 3.000',
+    price: 3000,
+    priceFormatted: 'Rp 3.000',
     imageUrl: '/risoltaro.png',
   },
   // BARIS 2
@@ -39,28 +45,32 @@ const ALL_PRODUCTS = [
     id: 5,
     name: 'Risol Makaroni Bolognese',
     desc: 'Saus keju gurih dipadu makaroni dan daging giling khas Italian Bolognese super mantap.',
-    price: 'Rp 4.000',
+    price: 4000,
+    priceFormatted: 'Rp 4.000',
     imageUrl: '/risolbolognese.png',
   },
   {
     id: 6,
     name: 'Risol Tiramisu',
     desc: 'Saus tiramisu manis beraroma kopi khas yang meleleh dan creamy di setiap gigitan.',
-    price: 'Rp 3.000',
+    price: 3000,
+    priceFormatted: 'Rp 3.000',
     imageUrl: '/risoltiramisu.png',
   },
   {
     id: 7,
     name: 'Risol Cokelat',
     desc: 'Isian cokelat leleh melimpah yang meluap saat digigit hangat-hangat bikin ketagihan.',
-    price: 'Rp 3.000',
+    price: 3000,
+    priceFormatted: 'Rp 3.000',
     imageUrl: '/risolcoklat.png',
   },
   {
     id: 8,
     name: 'Risol Rogout Ayam',
     desc: 'Isian adonan ragout ayam dan sayuran wortel gurih dengan tekstur creamy melimpah.',
-    price: 'Rp 3.500',
+    price: 3500,
+    priceFormatted: 'Rp 3.500',
     imageUrl: '/risolrogout.png',
   },
 ];
@@ -96,14 +106,40 @@ function ProductDescription({ desc }: { desc: string }) {
 }
 
 export default function ProductsList() {
+  const router = useRouter();
   const [selectedProduct, setSelectedProduct] = useState<{
+    id: number;
     name: string;
     desc: string;
+    price: number;
     imageUrl: string;
   } | null>(null);
 
-  const handlePesan = () => {
-    window.open('https://wa.me/6285211489443', '_blank');
+  // Masukkan item yang dipilih ke LocalStorage & arahkan ke halaman /keranjang
+  const handlePesan = (product: {
+    id: number;
+    name: string;
+    price: number;
+    imageUrl: string;
+  }) => {
+    const existingCart = JSON.parse(localStorage.getItem('almahryra_cart') || '[]');
+    const existingIndex = existingCart.findIndex((item: any) => item.id === product.id);
+
+    if (existingIndex > -1) {
+      existingCart[existingIndex].qty += 1;
+    } else {
+      existingCart.push({
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        qty: 1,
+        imageUrl: product.imageUrl,
+      });
+    }
+
+    localStorage.setItem('almahryra_cart', JSON.stringify(existingCart));
+    window.dispatchEvent(new Event('storage'));
+    router.push('/keranjang');
   };
 
   return (
@@ -186,12 +222,12 @@ export default function ProductsList() {
                 {/* BARIS HARGA & ACTION BUTTONS */}
                 <div className="flex items-center justify-between gap-1 pt-2 border-t border-gray-100">
                   <p className="font-black text-orange-500 text-xs sm:text-base whitespace-nowrap">
-                    {item.price}
+                    {item.priceFormatted}
                   </p>
 
                   <div className="flex items-center gap-1 sm:gap-1.5 flex-shrink-0">
                     <button
-                      onClick={() => setSelectedProduct({ name: item.name, desc: item.desc, imageUrl: item.imageUrl })}
+                      onClick={() => setSelectedProduct({ id: item.id, name: item.name, desc: item.desc, price: item.price, imageUrl: item.imageUrl })}
                       title="Preview Gambar"
                       className="p-1 sm:p-2 bg-sky-500 hover:bg-sky-600 active:scale-95 text-white rounded-md transition-all duration-200 shadow-sm"
                     >
@@ -199,8 +235,8 @@ export default function ProductsList() {
                     </button>
 
                     <button
-                      onClick={handlePesan}
-                      title="Pesan via WhatsApp"
+                      onClick={() => handlePesan({ id: item.id, name: item.name, price: item.price, imageUrl: item.imageUrl })}
+                      title="Pesan / Keranjang"
                       className="px-2 py-1 sm:px-3.5 sm:py-2 bg-orange-500 hover:bg-orange-600 active:scale-95 text-white font-bold text-[11px] sm:text-xs rounded-md transition-all duration-200 flex items-center gap-1 shadow-sm whitespace-nowrap"
                     >
                       <ShoppingCart className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
@@ -263,8 +299,9 @@ export default function ProductsList() {
 
               <button
                 onClick={() => {
+                  const productToOrder = { ...selectedProduct };
                   setSelectedProduct(null);
-                  handlePesan();
+                  handlePesan(productToOrder);
                 }}
                 className="px-5 py-2 bg-orange-500 hover:bg-orange-600 text-white font-black text-xs sm:text-sm rounded-md transition flex items-center gap-1.5 shadow-[0_4px_12px_-2px_rgba(249,115,22,0.35)] active:scale-95"
               >
