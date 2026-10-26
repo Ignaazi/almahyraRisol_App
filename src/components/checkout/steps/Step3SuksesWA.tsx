@@ -30,7 +30,7 @@ export default function Step3SuksesWA({
 }: Step3Props) {
   const labelPembayaran = metodePembayaran === 'COD' ? 'Cash' : 'QRIS';
 
-  // EF EK CONFETTI PERAYAAN
+  // EFEK CONFETTI PERAYAAN
   useEffect(() => {
     confetti({
       particleCount: 80,
@@ -60,39 +60,40 @@ export default function Step3SuksesWA({
     window.print();
   };
 
+  // HANDLER DOWNLOAD RESI (FILTER LANGSUNG TOMBOL TANPA MENGUBAH STYLE / TANPA KEDIP)
   const handleDownloadReceipt = async () => {
     const receiptElement = document.getElementById('printable-receipt');
     if (!receiptElement) return;
 
     try {
-      const html2canvas = (await import('html2canvas')).default;
-      
-      const actionButtons = receiptElement.querySelector('.receipt-actions') as HTMLElement;
-      if (actionButtons) actionButtons.style.display = 'none';
+      const { domToPng } = await import('modern-screenshot');
 
-      const canvas = await html2canvas(receiptElement, {
-        scale: 2,
+      // Filter elemen yang memiliki class 'receipt-actions' agar diabaikan saat pembentukan gambar
+      const dataUrl = await domToPng(receiptElement, {
+        scale: 3,
         backgroundColor: '#ffffff',
-        useCORS: true,
+        filter: (node) => {
+          if (node instanceof HTMLElement && node.classList.contains('receipt-actions')) {
+            return false;
+          }
+          return true;
+        },
       });
 
-      if (actionButtons) actionButtons.style.display = 'flex';
-
-      const image = canvas.toDataURL('image/png');
+      // Unduh file gambar struk
       const link = document.createElement('a');
-      link.href = image;
-      link.download = `Struk-AlmahyraRisol-${nama.replace(/\s+/g, '_')}.png`;
+      link.href = dataUrl;
+      link.download = `Struk-AlmahyraRisol-${nama.replace(/\s+/g, '_') || 'Pesanan'}.png`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
     } catch (error) {
-      alert('Gagal mendownload gambar struk.');
+      console.error('Error downloading receipt:', error);
+      alert('Gagal mendownload gambar struk. Silakan coba lagi.');
     }
   };
 
-//// buat wa ///////
-const handleSubmitKeWA = () => {
-    // Format teks WA super bersih tanpa bintang & tanpa symbol @
+  const handleSubmitKeWA = () => {
     let message = `PEMESANAN RESMI ALMAHYRA RISOL\n`;
     message += `---------------------------------\n\n`;
     
@@ -118,15 +119,13 @@ const handleSubmitKeWA = () => {
       message += `Saya melakukan pembayaran via QRIS. Bukti transfer akan saya kirimkan setelah pesan ini.`;
     }
 
-    // --- TAMBAHAN PENTING UNTUK MENCEGAH BUG KERANJANG TERSISA ---
+    // KOSONGKAN KERANJANG & TRIGGER EVENT NAVBAR
     localStorage.removeItem('almahryra_cart');
     window.dispatchEvent(new Event('cart-updated'));
-    // -------------------------------------------------------------
 
     const encodedMessage = encodeURIComponent(message);
     window.open(`https://wa.me/${MERCHANT_WA}?text=${encodedMessage}`, '_blank');
   };
-  /////end wa
 
   return (
     <>
@@ -167,7 +166,7 @@ const handleSubmitKeWA = () => {
           </p>
         </div>
 
-        {/* MENTION / INFO KHUSUS METODE QRIS */}
+        {/* INFO KHUSUS METODE QRIS */}
         {metodePembayaran === 'QRIS' && (
           <div className="bg-amber-50 border border-amber-300 rounded-xl p-3 flex items-start gap-2.5 text-xs text-amber-900 font-bold">
             <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
@@ -255,7 +254,7 @@ const handleSubmitKeWA = () => {
               </span>
             </div>
 
-            {/* TOMBOL PRINT & GRADIENT BLUE DOWNLOAD */}
+            {/* TOMBOL PRINT & DOWNLOAD (DENGAN KELAS receipt-actions DIFILTER TANPA HIDE KEDIP) */}
             <div className="receipt-actions flex items-center gap-1.5 justify-end font-sans">
               <button
                 type="button"
