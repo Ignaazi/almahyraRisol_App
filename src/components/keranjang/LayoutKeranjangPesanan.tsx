@@ -36,6 +36,9 @@ export default function LayoutKeranjangPesanan({
     if (deletingItem) {
       onRemove(deletingItem.id);
       setDeletingItem(null);
+      
+      // TRIGGER EVENT AGAR NAVBAR & CHECKOUT LANGSUNG RE-RENDER TANPA REFRESH MANUAL
+      window.dispatchEvent(new Event('cart-updated'));
     }
   };
 
@@ -78,7 +81,10 @@ export default function LayoutKeranjangPesanan({
                 <div className="flex items-center border border-slate-700 rounded-md bg-gray-50 overflow-hidden">
                   <button
                     type="button"
-                    onClick={() => onDecrease(item.id)}
+                    onClick={() => {
+                      onDecrease(item.id);
+                      window.dispatchEvent(new Event('cart-updated'));
+                    }}
                     className="p-0.5 sm:p-1 text-black hover:bg-gray-200 transition active:scale-95"
                     title="Kurangi"
                   >
@@ -89,7 +95,10 @@ export default function LayoutKeranjangPesanan({
                   </span>
                   <button
                     type="button"
-                    onClick={() => onIncrease(item.id)}
+                    onClick={() => {
+                      onIncrease(item.id);
+                      window.dispatchEvent(new Event('cart-updated'));
+                    }}
                     className="p-0.5 sm:p-1 text-black hover:bg-gray-200 transition active:scale-95"
                     title="Tambah"
                   >

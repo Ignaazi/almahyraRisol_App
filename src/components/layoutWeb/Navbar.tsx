@@ -38,8 +38,15 @@ export default function Navbar() {
     };
 
     updateCount();
+    
+    // DENGARKAN EVENT LOKAL (cart-updated) DAN EVENT BROWSER (storage) REAL-TIME
     window.addEventListener('storage', updateCount);
-    return () => window.removeEventListener('storage', updateCount);
+    window.addEventListener('cart-updated', updateCount);
+
+    return () => {
+      window.removeEventListener('storage', updateCount);
+      window.removeEventListener('cart-updated', updateCount);
+    };
   }, []);
 
   useEffect(() => {

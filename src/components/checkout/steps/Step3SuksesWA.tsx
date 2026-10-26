@@ -118,6 +118,11 @@ const handleSubmitKeWA = () => {
       message += `Saya melakukan pembayaran via QRIS. Bukti transfer akan saya kirimkan setelah pesan ini.`;
     }
 
+    // --- TAMBAHAN PENTING UNTUK MENCEGAH BUG KERANJANG TERSISA ---
+    localStorage.removeItem('almahryra_cart');
+    window.dispatchEvent(new Event('cart-updated'));
+    // -------------------------------------------------------------
+
     const encodedMessage = encodeURIComponent(message);
     window.open(`https://wa.me/${MERCHANT_WA}?text=${encodedMessage}`, '_blank');
   };

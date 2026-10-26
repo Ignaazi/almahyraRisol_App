@@ -35,6 +35,7 @@ export default function KeranjangPesanan({
         setCartItems(JSON.parse(savedCart));
       } catch (e) {
         console.error('Gagal membaca data keranjang:', e);
+        setCartItems([]);
       }
     } else {
       setCartItems([]);
@@ -54,9 +55,14 @@ export default function KeranjangPesanan({
     };
   }, [isOpen]);
 
+  // SINKRONISASI REAL-TIME (STORAGE EVENT + CUSTOM EVENT)
   useEffect(() => {
     window.addEventListener('storage', loadCart);
-    return () => window.removeEventListener('storage', loadCart);
+    window.addEventListener('cart-updated', loadCart);
+    return () => {
+      window.removeEventListener('storage', loadCart);
+      window.removeEventListener('cart-updated', loadCart);
+    };
   }, []);
 
   const handleClose = () => {
@@ -67,10 +73,12 @@ export default function KeranjangPesanan({
     }, 240);
   };
 
+  // UPDATE CART & TRIGGER CUSTOM EVENT SUPAYA CHECKOUT.TSX LANGSUNG SINKRON
   const updateCart = (newItems: CartItem[]) => {
     setCartItems(newItems);
     localStorage.setItem('almahryra_cart', JSON.stringify(newItems));
     window.dispatchEvent(new Event('storage'));
+    window.dispatchEvent(new Event('cart-updated')); // Trigger event lokal
   };
 
   const handleIncrease = (id: number) => {
@@ -102,7 +110,6 @@ export default function KeranjangPesanan({
     0
   );
 
-  // MENGARAHKAN LANGSUNG KE HALAMAN CHECKOUT
   const handleCheckoutPage = () => {
     if (cartItems.length === 0) return;
     handleClose();
@@ -272,7 +279,6 @@ export default function KeranjangPesanan({
                 Mulai Belanja
               </Link>
             ) : (
-              /* TOMBOL CHECKOUT DENGAN UKURAN DAN STYLING YANG SAMA */
               <button
                 type="button"
                 onClick={handleCheckoutPage}
