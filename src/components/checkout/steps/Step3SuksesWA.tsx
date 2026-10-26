@@ -60,15 +60,40 @@ export default function Step3SuksesWA({
     window.print();
   };
 
-  // HANDLER DOWNLOAD RESI (FILTER LANGSUNG TOMBOL TANPA MENGUBAH STYLE / TANPA KEDIP)
+  // FUNGSI PEMBANTU UNTUK KONVERSI GAMBAR KE BASE64 (AGAR LOGO PASTI TERBAWA DI SCREENSHOT)
+  const getBase64ImageFromUrl = async (imageUrl: string): Promise<string> => {
+    const res = await fetch(imageUrl);
+    const blob = await res.blob();
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  };
+
+  // HANDLER DOWNLOAD RESI (BEBAS KEDIP + LOGO TERBAWA 100%)
   const handleDownloadReceipt = async () => {
     const receiptElement = document.getElementById('printable-receipt');
     if (!receiptElement) return;
 
     try {
+      // 1. Ambil elemen img logo di dalam struk dan pastikan sudah siap/konversi ke Base64
+      const logoImg = receiptElement.querySelector('img') as HTMLImageElement;
+      let originalSrc = '';
+      if (logoImg && logoImg.src) {
+        originalSrc = logoImg.src;
+        try {
+          const base64Logo = await getBase64ImageFromUrl(PRINT_LOGO_IMAGE);
+          logoImg.src = base64Logo;
+        } catch (e) {
+          console.warn('Gagal memuat Base64 logo, menggunakan src asli:', e);
+        }
+      }
+
       const { domToPng } = await import('modern-screenshot');
 
-      // Filter elemen yang memiliki class 'receipt-actions' agar diabaikan saat pembentukan gambar
+      // 2. Render Canvas dengan filter tombol action
       const dataUrl = await domToPng(receiptElement, {
         scale: 3,
         backgroundColor: '#ffffff',
@@ -80,7 +105,12 @@ export default function Step3SuksesWA({
         },
       });
 
-      // Unduh file gambar struk
+      // 3. Kembalikan src asli gambar logo
+      if (logoImg && originalSrc) {
+        logoImg.src = originalSrc;
+      }
+
+      // 4. Unduh file gambar struk
       const link = document.createElement('a');
       link.href = dataUrl;
       link.download = `Struk-AlmahyraRisol-${nama.replace(/\s+/g, '_') || 'Pesanan'}.png`;
@@ -254,7 +284,7 @@ export default function Step3SuksesWA({
               </span>
             </div>
 
-            {/* TOMBOL PRINT & DOWNLOAD (DENGAN KELAS receipt-actions DIFILTER TANPA HIDE KEDIP) */}
+            {/* TOMBOL PRINT & DOWNLOAD (DENGAN KELAS receipt-actions) */}
             <div className="receipt-actions flex items-center gap-1.5 justify-end font-sans">
               <button
                 type="button"
