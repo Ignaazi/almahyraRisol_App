@@ -43,8 +43,8 @@ const ALL_PRODUCTS = [
     id: 5,
     name: 'Risol Makaroni Bolognese',
     desc: 'Saus keju gurih dipadu makaroni dan daging giling khas Italian Bolognese super mantap.',
-    price: 4000,
-    priceFormatted: 'Rp 4.000',
+    price: 3000,
+    priceFormatted: 'Rp 3.000',
     imageUrl: '/risolbolognese.png',
   },
   {
@@ -67,8 +67,8 @@ const ALL_PRODUCTS = [
     id: 8,
     name: 'Risol Rogout Ayam',
     desc: 'Isian adonan ragout ayam dan sayuran wortel gurih dengan tekstur creamy melimpah.',
-    price: 3500,
-    priceFormatted: 'Rp 3.500',
+    price: 3000,
+    priceFormatted: 'Rp 3.000',
     imageUrl: '/risolrogout.png',
   },
 ];

@@ -3,6 +3,7 @@
 import LayoutKeranjangPesanan, { CartItem } from '@/components/keranjang/LayoutKeranjangPesanan';
 import { ChevronDown, ChevronUp, ShoppingCart, Trash2, X } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
@@ -20,6 +21,8 @@ export default function KeranjangPesanan({
   const [showDetail, setShowDetail] = useState(false);
   const [showClearAllModal, setShowClearAllModal] = useState(false);
   const [mounted, setMounted] = useState(false);
+
+  const router = useRouter();
 
   useEffect(() => {
     setMounted(true);
@@ -99,19 +102,11 @@ export default function KeranjangPesanan({
     0
   );
 
-  const handleCheckoutWA = () => {
+  // MENGARAHKAN LANGSUNG KE HALAMAN CHECKOUT
+  const handleCheckoutPage = () => {
     if (cartItems.length === 0) return;
-
-    let message = 'Halo Almahyra Risol, saya ingin memesan:\n\n';
-    cartItems.forEach((item, index) => {
-      message += `${index + 1}. *${item.name}* x${item.qty} = Rp ${(
-        item.price * item.qty
-      ).toLocaleString('id-ID')}\n`;
-    });
-    message += `\n*Total Pembayaran:* Rp ${totalPrice.toLocaleString('id-ID')}`;
-
-    const encodedMessage = encodeURIComponent(message);
-    window.open(`https://wa.me/6285211489443?text=${encodedMessage}`, '_blank');
+    handleClose();
+    router.push('/checkout');
   };
 
   if (!isOpen) return null;
@@ -158,9 +153,8 @@ export default function KeranjangPesanan({
               : 'drawerSlideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards',
           }}
         >
-          {/* HEADER (DENGAN SPACING / MARGIN BESAR AGAR TIDAK SALAH KETIK DENGAN TOMBOL CLOSE) */}
+          {/* HEADER */}
           <div className="p-4 sm:p-5 pb-3 bg-white border-b border-gray-100 space-y-4">
-            {/* BARIS ATAS: KERANJANG & TOMBOL X BIRU */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <h2 className="text-base sm:text-xl font-black text-gray-900 tracking-wide">
@@ -179,13 +173,11 @@ export default function KeranjangPesanan({
               </button>
             </div>
 
-            {/* BARIS BAWAH (DIJAUHKAN DENGAN GAP): LIST PESANAN & BUTTON PERSEGI MERAH REMOVE ALL */}
             <div className="flex items-center justify-between pt-1">
               <span className="text-xs sm:text-sm font-extrabold text-black block">
                 List Keranjang Pesanan
               </span>
 
-              {/* TOMBOL REMOVE ALL PERSEGI PANJANG MERAH */}
               {cartItems.length > 0 && (
                 <button
                   type="button"
@@ -280,12 +272,13 @@ export default function KeranjangPesanan({
                 Mulai Belanja
               </Link>
             ) : (
+              /* TOMBOL CHECKOUT DENGAN UKURAN DAN STYLING YANG SAMA */
               <button
                 type="button"
-                onClick={handleCheckoutWA}
+                onClick={handleCheckoutPage}
                 className="w-full py-2.5 sm:py-3 bg-orange-500 hover:bg-orange-600 active:scale-95 text-white font-extrabold text-xs sm:text-sm rounded-md transition shadow-md flex items-center justify-center tracking-wide"
               >
-                Pesan via WhatsApp
+                Checkout
               </button>
             )}
           </div>
