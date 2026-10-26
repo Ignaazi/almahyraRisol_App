@@ -22,7 +22,7 @@ export default function Checkout() {
   const [metodePembayaran, setMetodePembayaran] = useState<'COD' | 'QRIS'>('COD');
   const [timeLeft, setTimeLeft] = useState(60);
 
-  // SINKRONISASI DATALOCALSTORAGE REAL-TIME
+  // SINKRONISASI DATALOCALSTORAGE REAL-TIME & AUTOMATIC RESET STEP KE 1
   useEffect(() => {
     setMounted(true);
 
@@ -32,15 +32,18 @@ export default function Checkout() {
         try {
           const items = JSON.parse(savedCart);
           if (!items || items.length === 0) {
+            setCurrentStep(1);
             router.push('/products');
           } else {
             setCartItems(items);
           }
         } catch (e) {
           console.error('Gagal membaca keranjang:', e);
+          setCurrentStep(1);
           router.push('/products');
         }
       } else {
+        setCurrentStep(1);
         router.push('/products');
       }
     };
@@ -56,6 +59,22 @@ export default function Checkout() {
       window.removeEventListener('cart-updated', checkCart);
     };
   }, [router]);
+
+  // SETIAP KALI KOMPONEN CHECKOUT DI-MOUNT UTUH ATAU HARUS MEMBACA ULANG KERANJANG BARU, SELALU RESET STEP KE STEP 1
+  useEffect(() => {
+    const savedCart = localStorage.getItem('almahryra_cart');
+    if (savedCart) {
+      try {
+        const items = JSON.parse(savedCart);
+        if (items && items.length > 0) {
+          // Jika keranjang ada isinya, paksa kembalikan langkah ke Step 1 (Isi Data Diri)
+          setCurrentStep(1);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  }, []);
 
   // HITUNG TIMER STEP 2
   useEffect(() => {
